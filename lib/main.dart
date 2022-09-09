@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:octopanic/api/api_config.dart';
+import 'package:octopanic/ui/initial_setup_route.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
@@ -16,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Octopanic'),
+      home: const InitialSetupRoute(),
     );
   }
 }
@@ -41,11 +47,60 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const AspectRatio(
             aspectRatio: 4 / 3,
-            child: WebView(initialUrl: ''),
+            child: WebView(
+                initialUrl: 'http://${ApiConfig.streamUrl}/?action=stream'),
           ),
-          ElevatedButton(onPressed: () {}, child: const Text("PANIK!"))
+          ElevatedButton(
+            onPressed: () {
+              callBackend();
+            },
+            child: const Text("PANIK!"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              sendStopCommand();
+            },
+            child: const Text("KALM"),
+          )
         ],
       ),
     );
+  }
+
+  Future<bool> callBackend() async {
+    try {
+      var response = await http.get(
+        Uri.http(ApiConfig.baseUrl, 'api/settings'),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer ${ApiConfig.apiKey}'
+        },
+      );
+      var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+}
+
+Future<bool> sendStopCommand() async {
+  try {
+    var response = await http.post(
+      Uri.http(ApiConfig.baseUrl, '/api/printer/command'),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer ${ApiConfig.apiKey}'
+      },
+      body: json.encode(
+        {
+          "command": "M112",
+        },
+      ),
+    );
+    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    return true;
+  } catch (e) {
+    return false;
   }
 }
