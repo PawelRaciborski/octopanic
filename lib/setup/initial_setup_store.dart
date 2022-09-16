@@ -1,0 +1,61 @@
+import 'package:mobx/mobx.dart';
+import 'package:octopanic/config/config_repo.dart';
+
+part 'initial_setup_store.g.dart';
+
+class InitialSetupStore = _InitialSetupStore with _$InitialSetupStore;
+
+abstract class _InitialSetupStore with Store {
+  final ConfigurationRepository _configurationRepository;
+
+  _InitialSetupStore(
+    this._configurationRepository,
+  );
+
+  @observable
+  String? _instanceUrl;
+
+  @observable
+  String? _initialInstanceUrl;
+
+  String? get initialInstanceUrl => _initialInstanceUrl;
+
+  String get instanceUrl => _instanceUrl ?? "";
+
+  set instanceUrl(String value) {
+    _instanceUrl = value;
+    _initialInstanceUrl = null;
+  }
+
+
+  @observable
+  String? _apiKey;
+
+  @observable
+  String? _initialApiKey;
+
+  String? get initialApiKey => _initialApiKey;
+
+  String get apiKey => _apiKey ?? "";
+
+  set apiKey(String value) {
+    _apiKey = value;
+    _initialApiKey = null;
+  }
+
+  @action
+  Future loadData() async {
+    final url = await _configurationRepository.instanceUrl;
+    _instanceUrl = url;
+    _initialInstanceUrl = url;
+
+    final apiKey = await _configurationRepository.apiKey;
+    _apiKey = _initialApiKey = apiKey;
+  }
+
+  @action
+  Future saveData() async {
+    _configurationRepository.storeInstanceUrl(instanceUrl);
+    _configurationRepository.storeApiKey(apiKey);
+  }
+}

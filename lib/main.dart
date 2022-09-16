@@ -2,12 +2,34 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:octopanic/api/api_config.dart';
-import 'package:octopanic/ui/initial_setup_route.dart';
+import 'package:octopanic/config/config_repo.dart';
+import 'package:octopanic/setup/initial_setup_route.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'setup/initial_setup_store.dart';
+
+GetIt injector = GetIt.instance;
+
 void main() {
+  injector
+    ..registerFactory(
+      () => const FlutterSecureStorage(
+        aOptions: AndroidOptions(
+          encryptedSharedPreferences: true,
+        ),
+      ),
+    )
+    ..registerLazySingleton<ConfigurationRepository>(
+      () => ConfigurationRepository(injector.get()),
+    )
+    ..registerFactory<InitialSetupStore>(
+      () => InitialSetupStore(injector.get()),
+    );
+
   runApp(const MyApp());
 }
 
