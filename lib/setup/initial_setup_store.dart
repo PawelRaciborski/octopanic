@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:octopanic/api/api.dart';
 import 'package:octopanic/config/config_repo.dart';
 
 part 'initial_setup_store.g.dart';
@@ -7,9 +8,11 @@ class InitialSetupStore = _InitialSetupStore with _$InitialSetupStore;
 
 abstract class _InitialSetupStore with Store {
   final ConfigurationRepository _configurationRepository;
+  final RestClientInteractor _restClient;
 
   _InitialSetupStore(
     this._configurationRepository,
+    this._restClient,
   );
 
   @observable
@@ -26,7 +29,6 @@ abstract class _InitialSetupStore with Store {
     _instanceUrl = value;
     _initialInstanceUrl = null;
   }
-
 
   @observable
   String? _apiKey;
@@ -54,8 +56,12 @@ abstract class _InitialSetupStore with Store {
   }
 
   @action
-  Future saveData() async {
-    _configurationRepository.storeInstanceUrl(instanceUrl);
-    _configurationRepository.storeApiKey(apiKey);
+  Future submitInput() async {
+    await _configurationRepository.storeInstanceUrl(instanceUrl);
+    await _configurationRepository.storeApiKey(apiKey);
+
+    final settings = await _restClient.getSettings();
+
+    print(settings);
   }
 }
