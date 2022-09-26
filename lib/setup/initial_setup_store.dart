@@ -56,12 +56,15 @@ abstract class _InitialSetupStore with Store {
   }
 
   @action
-  Future submitInput() async {
+  Future<bool> submitInput() async {
     await _configurationRepository.storeInstanceUrl(instanceUrl);
     await _configurationRepository.storeApiKey(apiKey);
-
-    final settings = await _restClient.getSettings();
-
-    print(settings);
+    try {
+      _restClient.updateBaseUrl(instanceUrl);
+      final settings = await _restClient.getSettings();
+      return true;
+    } catch (exception) {
+      return false;
+    }
   }
 }

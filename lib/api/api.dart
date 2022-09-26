@@ -23,6 +23,10 @@ class RestClientInteractor {
   RestClientInteractor(this._restClient, this._apiKey);
 
   Future<Settings> getSettings() => _restClient.getSettings("Bearer $_apiKey");
+
+  updateBaseUrl(String baseUrl) {
+    (_restClient as _RestClient).baseUrl = baseUrl;
+  }
 }
 
 class GetSettingsUseCase {

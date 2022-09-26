@@ -98,14 +98,16 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                       },
                     ),
                     ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState?.validate() ?? false) {
-                            initialSetupStore.submitInput();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("S!"),
-                              ),
-                            );
+                            if (!(await initialSetupStore.submitInput())) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Could not connect to the server at ${initialSetupStore.instanceUrl}'),
+                                ),
+                              );
+                            }
                           }
                         },
                         child: const Text("Confirm"))
