@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:octopanic/api/api_config.dart';
 import 'package:octopanic/api/api_injector.dart';
 import 'package:octopanic/config/config_repo.dart';
+import 'package:octopanic/control/print_control_injector.dart';
 import 'package:octopanic/setup/initial_setup_route.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -33,7 +34,7 @@ void main() {
         injector.get(),
         await injector.getAsync(),
       ),
-    );
+    )..registerPrintControl();
 
   runApp(const MyApp());
 }

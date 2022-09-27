@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:octopanic/api/api_config.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:octopanic/control/print_control_store.dart';
+import 'package:octopanic/main.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrintControlRoute extends StatefulWidget {
@@ -10,24 +12,46 @@ class PrintControlRoute extends StatefulWidget {
 }
 
 class _PrintControlRoute extends State<PrintControlRoute> {
+  final Future<PrintControlStore> _printControlStore = injector.getAsync();
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Column(
-          children: [
-            const AspectRatio(
-              aspectRatio: 4 / 3,
-              child: WebView(
-                  initialUrl: 'http://${ApiConfig.streamUrl}/?action=stream'),
+  Widget build(BuildContext context) => FutureBuilder<PrintControlStore>(
+      future: _printControlStore,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Text("ERROR!");
+        }
+
+        final PrintControlStore printControlStore = snapshot.data!;
+        printControlStore.loadData();
+
+        return Observer(builder: (context) {
+          return Scaffold(
+            body: Column(
+              children: [
+                _getVideoOutput(printControlStore.streamUrl),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("PANIK!"),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("KALM"),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text("PANIK!"),
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text("KALM"),
-            ),
-          ],
-        ),
-      );
+          );
+        });
+      });
+
+  Widget _getVideoOutput(String? streamUrl) {
+    if (streamUrl == null) {
+      return const Text('No video stream available!');
+    }
+
+    return AspectRatio(
+      aspectRatio: 4 / 3,
+      child: WebView(initialUrl: streamUrl),
+    );
+  }
 }

@@ -14,7 +14,7 @@ class GetStreamUrlUseCase {
 
   Future<String?> execute() async {
     final String? configurationUrl = await _configurationRepository.streamUrl;
-    if (configurationUrl != null) {
+    if (configurationUrl != null && configurationUrl.isNotEmpty) {
       return configurationUrl;
     }
 
