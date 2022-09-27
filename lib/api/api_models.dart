@@ -16,11 +16,11 @@ class Settings {
 
 @JsonSerializable()
 class Webcam {
-  // final Url streamUrl;
+  final String streamUrl;
   final String streamRatio;
 
   Webcam(
-    // this.streamUrl,
+    this.streamUrl,
     this.streamRatio,
   );
 

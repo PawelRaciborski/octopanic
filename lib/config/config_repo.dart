@@ -19,4 +19,11 @@ class ConfigurationRepository {
 
   Future<void> storeApiKey(String apiKey) =>
       _secureStorage.write(key: _apiKey, value: apiKey);
+
+  static const _streamUrl = 'STREAM_URL';
+
+  Future<String?> get streamUrl => _secureStorage.read(key: _streamUrl);
+
+  Future<void> storeStreamUrl(String streamUrl) =>
+      _secureStorage.write(key: _streamUrl, value: streamUrl);
 }

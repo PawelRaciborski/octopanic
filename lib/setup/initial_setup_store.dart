@@ -45,6 +45,21 @@ abstract class _InitialSetupStore with Store {
     _initialApiKey = null;
   }
 
+  @observable
+  String? _streamUrl;
+
+  @observable
+  String? _initialStreamUrl;
+
+  String? get initialStreamUrl => _initialStreamUrl;
+
+  String get streamUrl => _streamUrl ?? "";
+
+  set streamUrl(String value) {
+    _streamUrl = value;
+    _initialStreamUrl = null;
+  }
+
   @action
   Future loadData() async {
     final url = await _configurationRepository.instanceUrl;
@@ -53,12 +68,17 @@ abstract class _InitialSetupStore with Store {
 
     final apiKey = await _configurationRepository.apiKey;
     _apiKey = _initialApiKey = apiKey;
+
+    final streamUrl = await _configurationRepository.streamUrl;
+    _streamUrl = _initialStreamUrl = streamUrl;
   }
 
   @action
   Future<bool> submitInput() async {
     await _configurationRepository.storeInstanceUrl(instanceUrl);
     await _configurationRepository.storeApiKey(apiKey);
+    await _configurationRepository.storeStreamUrl(streamUrl);
+
     try {
       _restClient.updateBaseUrl(instanceUrl);
       final settings = await _restClient.getSettings();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:octopanic/control/print_control_route.dart';
 import 'package:octopanic/main.dart';
 
 import 'initial_setup_store.dart';
@@ -8,7 +9,7 @@ class InitialSetupRoute extends StatefulWidget {
   const InitialSetupRoute({Key? key}) : super(key: key);
 
   @override
-  _InitialSetupRouteState createState() => _InitialSetupRouteState();
+  State<InitialSetupRoute> createState() => _InitialSetupRouteState();
 }
 
 class _InitialSetupRouteState extends State<InitialSetupRoute> {
@@ -63,6 +64,12 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                       },
                     ),
                     TextFormField(
+                      onChanged: (value) {
+                        initialSetupStore.streamUrl = value;
+                      },
+                      controller: _createTextEditingController(
+                        initialSetupStore.initialStreamUrl,
+                      ),
                       keyboardType: TextInputType.url,
                       decoration: const InputDecoration(
                           labelText: 'Video stream address (optional)'),
@@ -105,6 +112,14 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                                 SnackBar(
                                   content: Text(
                                       'Could not connect to the server at ${initialSetupStore.instanceUrl}'),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PrintControlRoute(),
                                 ),
                               );
                             }
