@@ -13,9 +13,15 @@ abstract class _PrintControlStore with Store {
   @observable
   String? _streamUrl;
 
+  @observable
+  bool showLoading = true;
+
   String? get streamUrl => _streamUrl;
 
+  @action
   Future loadData() async {
     _streamUrl = await _getStreamUrlUseCase.execute();
+    showLoading = false;
   }
 }
+ 

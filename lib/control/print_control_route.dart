@@ -27,19 +27,23 @@ class _PrintControlRoute extends State<PrintControlRoute> {
 
         return Observer(builder: (context) {
           return Scaffold(
-            body: Column(
-              children: [
-                _getVideoOutput(printControlStore.streamUrl),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text("PANIK!"),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text("KALM"),
-                ),
-              ],
-            ),
+            body: printControlStore.showLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    children: [
+                      _getVideoOutput(printControlStore.streamUrl),
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: const Text("PANIK!"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: const Text("KALM"),
+                      ),
+                    ],
+                  ),
           );
         });
       });
