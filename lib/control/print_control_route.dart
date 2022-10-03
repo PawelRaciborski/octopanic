@@ -31,18 +31,51 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : Column(
-                    children: [
-                      _getVideoOutput(printControlStore.streamUrl),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text("PANIK!"),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text("KALM"),
-                      ),
-                    ],
+                : SafeArea(
+                    child: Column(
+                      children: [
+                        _getVideoOutput(printControlStore.streamUrl),
+                        ClipOval(
+                          child: Material(
+                            color: Colors.red, // Button color
+                            child: InkWell(
+                              splashColor: Colors.orange, // Splash color
+                              onLongPress: (){
+                                //TODO: pass action to store
+                              },
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Long press to panik!'),
+                                  ),
+                                );
+                              },
+                              // onLongPress: (){},
+                              child: const SizedBox(
+                                width: 200,
+                                height: 200,
+                                child: Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: Expanded(
+                                    child: FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: Icon(
+                                        Icons.warning_amber,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: const Text("KALM"),
+                        ),
+                      ],
+                    ),
                   ),
           );
         });
