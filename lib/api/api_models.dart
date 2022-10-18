@@ -8,11 +8,11 @@ class Settings {
 
   Settings(this.webcam);
 
-  factory Settings.fromJson(Map<String, dynamic> json) => _$SettingsFromJson(json);
-  Map<String,dynamic>toJson() => _$SettingsToJson(this);
+  factory Settings.fromJson(Map<String, dynamic> json) =>
+      _$SettingsFromJson(json);
 
+  Map<String, dynamic> toJson() => _$SettingsToJson(this);
 }
-
 
 @JsonSerializable()
 class Webcam {
@@ -25,7 +25,8 @@ class Webcam {
   );
 
   factory Webcam.fromJson(Map<String, dynamic> json) => _$WebcamFromJson(json);
-  Map<String,dynamic>toJson() => _$WebcamToJson(this);
+
+  Map<String, dynamic> toJson() => _$WebcamToJson(this);
 }
 //
 // class Printer {
@@ -68,3 +69,15 @@ class Webcam {
 //     this.sdReady,
 //   );
 // }
+@JsonSerializable()
+class Command {
+  final String command;
+  final String? action;
+
+  Command(this.command, [this.action]);
+
+  factory Command.fromJson(Map<String, dynamic> json) =>
+      _$CommandFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CommandToJson(this);
+}

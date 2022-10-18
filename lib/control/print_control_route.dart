@@ -40,9 +40,8 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                             color: Colors.red, // Button color
                             child: InkWell(
                               splashColor: Colors.orange, // Splash color
-                              onLongPress: (){
-                                //TODO: pass action to store
-                              },
+                              onLongPress: () =>
+                                  printControlStore.sendStopInstruction(),
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -71,7 +70,14 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onLongPress: () {
+                            printControlStore.sendCancelInstruction();
+                          },
+                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Long press to cancel print!'),
+                            ),
+                          ),
                           child: const Text("KALM"),
                         ),
                       ],
