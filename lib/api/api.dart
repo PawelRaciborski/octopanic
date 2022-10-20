@@ -57,12 +57,3 @@ class RestClientInteractor {
     (_restClient as _RestClient).baseUrl = baseUrl;
   }
 }
-
-class GetSettingsUseCase {
-  final RestClient _restClient;
-  final String _apiKey;
-
-  GetSettingsUseCase(this._restClient, this._apiKey);
-
-  Future<Settings> execute() => _restClient.getSettings(_apiKey);
-}
