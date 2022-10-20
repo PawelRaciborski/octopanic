@@ -22,9 +22,13 @@ abstract class RestClient {
       @Body() Command command);
 
   @POST("/job")
-  Future postJobCommand(
-      @Header(HttpHeaders.authorizationHeader) bearerToken,
+  Future postJobCommand(@Header(HttpHeaders.authorizationHeader) bearerToken,
       @Body() Command command);
+
+  @GET("/job")
+  Future<JobInfo> getJobInfo(
+    @Header(HttpHeaders.authorizationHeader) bearerToken,
+  );
 }
 
 class RestClientInteractor {
@@ -37,8 +41,7 @@ class RestClientInteractor {
 
   Future<Settings> getSettings() => _restClient.getSettings(_bearer);
 
-  Future postPrinterCommand(
-      OctoprintInstruction octoprintInstruction) {
+  Future postPrinterCommand(OctoprintInstruction octoprintInstruction) {
     switch (octoprintInstruction.handler) {
       case OctoprintCommandHandler.printer:
         return _restClient.postPrinterCommand(
@@ -56,4 +59,6 @@ class RestClientInteractor {
   updateBaseUrl(String baseUrl) {
     (_restClient as _RestClient).baseUrl = baseUrl;
   }
+
+  Future<JobInfo> getJobInfo() => _restClient.getJobInfo(_bearer);
 }

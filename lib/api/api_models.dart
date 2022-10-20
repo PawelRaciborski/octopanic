@@ -53,8 +53,7 @@ class File {
 
   File(this.date, this.display, this.name, this.origin, this.path, this.size);
 
-  factory File.fromJson(Map<String, dynamic> json) =>
-      _$FileFromJson(json);
+  factory File.fromJson(Map<String, dynamic> json) => _$FileFromJson(json);
 
   Map<String, dynamic> toJson() => _$FileToJson(this);
 }
@@ -87,8 +86,7 @@ class Job {
 
   Job(this.file);
 
-  factory Job.fromJson(Map<String, dynamic> json) =>
-      _$JobFromJson(json);
+  factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 
   Map<String, dynamic> toJson() => _$JobToJson(this);
 }
@@ -97,8 +95,13 @@ class Job {
 class JobInfo {
   final JobState state;
   final Progress progress;
+  final Job job;
 
-  JobInfo(this.state, this.progress);
+  JobInfo(
+    this.state,
+    this.progress,
+    this.job,
+  );
 
   factory JobInfo.fromJson(Map<String, dynamic> json) =>
       _$JobInfoFromJson(json);
