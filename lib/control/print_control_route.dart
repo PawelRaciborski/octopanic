@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:octopanic/api/api_models.dart';
 import 'package:octopanic/control/print_control_store.dart';
 import 'package:octopanic/main.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -35,44 +36,16 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                     child: Column(
                       children: [
                         _getVideoOutput(printControlStore.streamUrl),
-                        ClipOval(
-                          child: Material(
-                            color: Colors.red, // Button color
-                            child: InkWell(
-                              splashColor: Colors.orange, // Splash color
-                              onLongPress: () =>
-                                  printControlStore.sendStopInstruction(),
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Long press to panik!'),
-                                  ),
-                                );
-                              },
-                              // onLongPress: (){},
-                              child: const SizedBox(
-                                width: 200,
-                                height: 200,
-                                child: Padding(
-                                  padding: EdgeInsets.all(40.0),
-                                  child: Expanded(
-                                    child: FittedBox(
-                                      fit: BoxFit.fill,
-                                      child: Icon(
-                                        Icons.warning_amber,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                        _buildStatusDetails(
+                          printControlStore.jobState,
+                          printControlStore.fileName,
+                          printControlStore.completion,
+                        ),
+                        _buildPanicButton(
+                          sendStopInstruction: () => printControlStore.sendStopInstruction(),
                         ),
                         ElevatedButton(
-                          onLongPress: () {
-                            printControlStore.sendCancelInstruction();
-                          },
+                          onLongPress: () => printControlStore.sendCancelInstruction(),
                           onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Long press to cancel print!'),
@@ -86,6 +59,63 @@ class _PrintControlRoute extends State<PrintControlRoute> {
           );
         });
       });
+
+  Widget _buildStatusDetails(
+    JobState jobState,
+    String? fileDisplayName,
+    double completion,
+  ) {
+    final List<Widget> list = [
+      Text("Printer state: ${jobState.name}"),
+    ];
+    if (fileDisplayName != null) {
+      list.add(Text("File: $fileDisplayName"));
+    }
+
+    list.addAll([
+      Text("Printing progress: ${completion * 100}%"),
+      LinearProgressIndicator(
+        value: completion,
+        semanticsLabel: "Print progress visualisation",
+      ),
+    ]);
+
+    return Column(children: list);
+  }
+
+  Widget _buildPanicButton({required Function sendStopInstruction}) => ClipOval(
+      child: Material(
+        color: Colors.red, // Button color
+        child: InkWell(
+          splashColor: Colors.orange, // Splash color
+          onLongPress: () => sendStopInstruction(),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Long press to panik!'),
+              ),
+            );
+          },
+          // onLongPress: (){},
+          child: const SizedBox(
+            width: 200,
+            height: 200,
+            child: Padding(
+              padding: EdgeInsets.all(40.0),
+              child: Expanded(
+                child: FittedBox(
+                  fit: BoxFit.fill,
+                  child: Icon(
+                    Icons.warning_amber,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
 
   Widget _getVideoOutput(String? streamUrl) {
     if (streamUrl == null) {

@@ -28,14 +28,27 @@ abstract class _PrintControlStore with Store {
 
   String? get streamUrl => _streamUrl;
 
+  @observable
+  double _completion = 0.0;
+
+  double get completion => _completion;
+
+  @observable
+  String? _fileName;
+
+  String? get fileName => _fileName;
+
+
+  @observable
+  JobState _jobState = JobState.offline;
+
+  JobState get jobState => _jobState;
+
   @action
   Future loadData() async {
     _streamUrl = await _getStreamUrlUseCase.execute();
+    _updatePrintDetails();
     showLoading = false;
-
-    //TODO: add real job details processing
-    final JobInfo jobInfo = await _getJobInfoUseCase.execute();
-    print(jobInfo);
   }
 
   @action
@@ -51,5 +64,13 @@ abstract class _PrintControlStore with Store {
     _sendCommandUseCase.octoprintCommand = OctoprintCommand.cancel;
     _sendCommandUseCase.octoprintCommandHandler = OctoprintCommandHandler.job;
     _sendCommandUseCase.execute();
+  }
+
+  Future _updatePrintDetails() async {
+    final JobInfo jobInfo = await _getJobInfoUseCase.execute();
+    _completion = jobInfo.progress.completion ?? 0.0;
+    _fileName = jobInfo.job.file.display;
+    _jobState = jobInfo.state;
+    print(jobInfo);
   }
 }

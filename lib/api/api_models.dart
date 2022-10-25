@@ -111,7 +111,7 @@ class JobInfo {
 
 enum JobState {
   @JsonValue('Operational')
-  optional,
+  operational,
   @JsonValue('Printing')
   printing,
   @JsonValue('Pausing')
