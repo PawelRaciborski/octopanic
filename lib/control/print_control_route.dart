@@ -73,9 +73,9 @@ class _PrintControlRoute extends State<PrintControlRoute> {
     }
 
     list.addAll([
-      Text("Printing progress: ${completion * 100}%"),
+      Text("Printing progress: ${completion.toStringAsFixed(2)}%"),
       LinearProgressIndicator(
-        value: completion,
+        value: completion / 100.0,
         semanticsLabel: "Print progress visualisation",
       ),
     ]);

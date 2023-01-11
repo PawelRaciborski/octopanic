@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:mobx/mobx.dart';
 import 'package:octopanic/api/api_instruciton.dart';
 import 'package:octopanic/api/api_models.dart';
@@ -38,11 +40,12 @@ abstract class _PrintControlStore with Store {
 
   String? get fileName => _fileName;
 
-
   @observable
   JobState _jobState = JobState.offline;
 
   JobState get jobState => _jobState;
+
+  StreamSubscription<JobInfo>? _subscription;
 
   @action
   Future loadData() async {
@@ -54,8 +57,7 @@ abstract class _PrintControlStore with Store {
   @action
   Future sendStopInstruction() async {
     _sendCommandUseCase.octoprintCommand = OctoprintCommand.emergencyStop;
-    _sendCommandUseCase.octoprintCommandHandler =
-        OctoprintCommandHandler.printer;
+    _sendCommandUseCase.octoprintCommandHandler = OctoprintCommandHandler.printer;
     _sendCommandUseCase.execute();
   }
 
@@ -67,10 +69,11 @@ abstract class _PrintControlStore with Store {
   }
 
   Future _updatePrintDetails() async {
-    final JobInfo jobInfo = await _getJobInfoUseCase.execute();
-    _completion = jobInfo.progress.completion ?? 0.0;
-    _fileName = jobInfo.job.file.display;
-    _jobState = jobInfo.state;
-    print(jobInfo);
+    _subscription?.cancel();
+    _subscription = _getJobInfoUseCase.execute().listen((jobInfo) {
+      _completion = jobInfo.progress.completion ?? 0.0;
+      _fileName = jobInfo.job.file.display;
+      _jobState = jobInfo.state;
+    });
   }
 }
