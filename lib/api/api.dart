@@ -33,7 +33,7 @@ abstract class RestClient {
 
 class RestClientInteractor {
   final RestClient _restClient;
-  final String _apiKey;
+  String _apiKey;
 
   String get _bearer => "Bearer $_apiKey";
 
@@ -56,8 +56,9 @@ class RestClientInteractor {
     }
   }
 
-  updateBaseUrl(String baseUrl) {
+  updateConnectionDetails(String baseUrl, String apiKey) {
     (_restClient as _RestClient).baseUrl = baseUrl;
+    _apiKey = apiKey;
   }
 
   Future<JobInfo> getJobInfo() => _restClient.getJobInfo(_bearer);

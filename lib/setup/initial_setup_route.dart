@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 import 'package:octopanic/control/print_control_route.dart';
 import 'package:octopanic/main.dart';
 
@@ -16,12 +17,21 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
   final _formKey = GlobalKey<FormState>();
 
   // final InitialSetupStore _initialSetupStore = await injector.getAsync<InitialSetupStore>();
-  final Future<InitialSetupStore> _initialSetupStoreFuture =
-      injector.getAsync<InitialSetupStore>();
+  final Future<InitialSetupStore> _initialSetupStoreFuture = injector.getAsync<InitialSetupStore>();
+
+  final List<ReactionDisposer> _disposers = [];
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    for (var dispose in _disposers) {
+      dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -34,6 +44,29 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
 
         final InitialSetupStore initialSetupStore = snapshot.data!;
         initialSetupStore.loadData();
+
+        _disposers.add(
+          reaction(
+            (_) => initialSetupStore.isReadyForNavigation,
+            (value) {
+              if (!(value == true)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text('Could not connect to the server at ${initialSetupStore.instanceUrl}'),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrintControlRoute(),
+                  ),
+                );
+              }
+            },
+          ),
+        );
 
         return Form(
           key: _formKey,
@@ -50,8 +83,7 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                         initialSetupStore.initialInstanceUrl,
                       ),
                       keyboardType: TextInputType.url,
-                      decoration: const InputDecoration(
-                          labelText: 'Octoprint instance address'),
+                      decoration: const InputDecoration(labelText: 'Octoprint instance address'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Octoprint instance address cannot be empty!";
@@ -71,8 +103,8 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                         initialSetupStore.initialStreamUrl,
                       ),
                       keyboardType: TextInputType.url,
-                      decoration: const InputDecoration(
-                          labelText: 'Video stream address (optional)'),
+                      decoration:
+                          const InputDecoration(labelText: 'Video stream address (optional)'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return null;
@@ -107,22 +139,7 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                     ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState?.validate() ?? false) {
-                            if (!(await initialSetupStore.submitInput())) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Could not connect to the server at ${initialSetupStore.instanceUrl}'),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PrintControlRoute(),
-                                ),
-                              );
-                            }
+                            initialSetupStore.submitInput();
                           }
                         },
                         child: const Text("Confirm"))

@@ -60,6 +60,11 @@ abstract class _InitialSetupStore with Store {
     _initialStreamUrl = null;
   }
 
+  @observable
+  bool _isReadyForNavigation = false;
+
+  bool get isReadyForNavigation => _isReadyForNavigation;
+
   @action
   Future loadData() async {
     final url = await _configurationRepository.instanceUrl;
@@ -71,17 +76,26 @@ abstract class _InitialSetupStore with Store {
 
     final streamUrl = await _configurationRepository.streamUrl;
     _streamUrl = _initialStreamUrl = streamUrl;
+
+    if ((_instanceUrl?.isNotEmpty ?? false) && (_apiKey?.isNotEmpty ?? false)) {
+      _isReadyForNavigation = await _checkConnection();
+    }
   }
 
   @action
-  Future<bool> submitInput() async {
+  Future submitInput() async {
     await _configurationRepository.storeInstanceUrl(instanceUrl);
     await _configurationRepository.storeApiKey(apiKey);
     await _configurationRepository.storeStreamUrl(streamUrl);
 
+    _restClient.updateConnectionDetails(instanceUrl, apiKey);
+
+    _isReadyForNavigation = await _checkConnection();
+  }
+
+  Future<bool> _checkConnection() async {
     try {
-      _restClient.updateBaseUrl(instanceUrl);
-      final settings = await _restClient.getSettings();
+      await _restClient.getSettings();
       return true;
     } catch (exception) {
       return false;
