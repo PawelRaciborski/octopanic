@@ -29,7 +29,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const InitialSetupRoute(),
+      home: const InitialSetupRoute(
+        shouldPopOnFinish: false,
+      ),
     );
   }
 }

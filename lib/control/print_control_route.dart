@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:octopanic/api/api_models.dart';
 import 'package:octopanic/control/print_control_store.dart';
 import 'package:octopanic/main.dart';
+import 'package:octopanic/setup/initial_setup_route.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrintControlRoute extends StatefulWidget {
@@ -28,6 +29,22 @@ class _PrintControlRoute extends State<PrintControlRoute> {
 
         return Observer(builder: (context) {
           return Scaffold(
+            appBar: AppBar(
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InitialSetupRoute(
+                            shouldPopOnFinish: true,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.settings))
+              ],
+            ),
             body: printControlStore.showLoading
                 ? const Center(
                     child: CircularProgressIndicator(),
@@ -84,38 +101,38 @@ class _PrintControlRoute extends State<PrintControlRoute> {
   }
 
   Widget _buildPanicButton({required Function sendStopInstruction}) => ClipOval(
-      child: Material(
-        color: Colors.red, // Button color
-        child: InkWell(
-          splashColor: Colors.orange, // Splash color
-          onLongPress: () => sendStopInstruction(),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Long press to panik!'),
-              ),
-            );
-          },
-          // onLongPress: (){},
-          child: const SizedBox(
-            width: 200,
-            height: 200,
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: Expanded(
-                child: FittedBox(
-                  fit: BoxFit.fill,
-                  child: Icon(
-                    Icons.warning_amber,
-                    color: Colors.white,
+        child: Material(
+          color: Colors.red, // Button color
+          child: InkWell(
+            splashColor: Colors.orange, // Splash color
+            onLongPress: () => sendStopInstruction(),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Long press to panik!'),
+                ),
+              );
+            },
+            // onLongPress: (){},
+            child: const SizedBox(
+              width: 200,
+              height: 200,
+              child: Padding(
+                padding: EdgeInsets.all(40.0),
+                child: Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Icon(
+                      Icons.warning_amber,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
   Widget _getVideoOutput(String? streamUrl) {
     if (streamUrl == null) {

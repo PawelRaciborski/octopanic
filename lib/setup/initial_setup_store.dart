@@ -40,6 +40,10 @@ abstract class _InitialSetupStore with Store {
 
   String get apiKey => _apiKey ?? "";
 
+  @observable
+  bool _showProgress = true;
+  bool get showProgress => _showProgress;
+
   set apiKey(String value) {
     _apiKey = value;
     _initialApiKey = null;
@@ -80,6 +84,7 @@ abstract class _InitialSetupStore with Store {
     if ((_instanceUrl?.isNotEmpty ?? false) && (_apiKey?.isNotEmpty ?? false)) {
       _isReadyForNavigation = await _checkConnection();
     }
+    _showProgress = false;
   }
 
   @action
