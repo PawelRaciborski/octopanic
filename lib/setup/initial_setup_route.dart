@@ -46,7 +46,11 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
       future: _initialSetupStoreFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Text("ERROR!");
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
 
         final InitialSetupStore initialSetupStore = snapshot.data!;

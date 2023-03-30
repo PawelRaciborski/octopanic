@@ -21,7 +21,11 @@ class _PrintControlRoute extends State<PrintControlRoute> {
       future: _printControlStore,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Text("ERROR!");
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
 
         final PrintControlStore printControlStore = snapshot.data!;
