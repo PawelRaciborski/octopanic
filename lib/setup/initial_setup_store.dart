@@ -41,7 +41,8 @@ abstract class _InitialSetupStore with Store {
   String get apiKey => _apiKey ?? "";
 
   @observable
-  bool _showProgress = true;
+  bool _showProgress = false;
+
   bool get showProgress => _showProgress;
 
   set apiKey(String value) {
@@ -70,32 +71,38 @@ abstract class _InitialSetupStore with Store {
   bool get isReadyForNavigation => _isReadyForNavigation;
 
   @action
-  Future loadData() async {
-    final url = await _configurationRepository.instanceUrl;
-    _instanceUrl = url;
-    _initialInstanceUrl = url;
+  Future initialize() async {
+    if (_configurationRepository.initialConfigurationSucceeded) {
+      _isReadyForNavigation = true;
+    } else {
+      final url = await _configurationRepository.instanceUrl;
+      _instanceUrl = url;
+      _initialInstanceUrl = url;
 
-    final apiKey = await _configurationRepository.apiKey;
-    _apiKey = _initialApiKey = apiKey;
+      final apiKey = await _configurationRepository.apiKey;
+      _apiKey = _initialApiKey = apiKey;
 
-    final streamUrl = await _configurationRepository.streamUrl;
-    _streamUrl = _initialStreamUrl = streamUrl;
-
-    if ((_instanceUrl?.isNotEmpty ?? false) && (_apiKey?.isNotEmpty ?? false)) {
-      _isReadyForNavigation = await _checkConnection();
+      final streamUrl = await _configurationRepository.streamUrl;
+      _streamUrl = _initialStreamUrl = streamUrl;
     }
     _showProgress = false;
   }
 
   @action
   Future submitInput() async {
+    _showProgress = true;
+    await _configurationRepository.storeInitialConfigurationSucceeded(false);
     await _configurationRepository.storeInstanceUrl(instanceUrl);
     await _configurationRepository.storeApiKey(apiKey);
     await _configurationRepository.storeStreamUrl(streamUrl);
 
     _restClient.updateConnectionDetails(instanceUrl, apiKey);
 
-    _isReadyForNavigation = await _checkConnection();
+    final bool connectionSuccessful = await _checkConnection();
+    if (connectionSuccessful) {
+      await _configurationRepository.storeInitialConfigurationSucceeded(true);
+    }
+    _isReadyForNavigation = connectionSuccessful;
   }
 
   Future<bool> _checkConnection() async {

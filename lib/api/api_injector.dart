@@ -7,10 +7,10 @@ extension ApiInjector on GetIt {
   GetIt registerApi() => this
     ..registerFactoryAsync<RestClient>(() async => RestClient(
           Dio(),
-          baseUrl: await (get<ConfigurationRepository>().instanceUrl) ?? "",
+          baseUrl: await ((await getAsync<ConfigurationRepository>()).instanceUrl) ?? "",
         ))
     ..registerFactoryAsync(() async => RestClientInteractor(
           await getAsync<RestClient>(),
-          await (get<ConfigurationRepository>().apiKey) ?? "",
+          await ((await getAsync<ConfigurationRepository>()).apiKey) ?? "",
         ));
 }

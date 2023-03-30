@@ -5,7 +5,7 @@ extension SetupInjector on GetIt {
   GetIt registerSetup() => this
     ..registerFactoryAsync<InitialSetupStore>(
       () async => InitialSetupStore(
-        get(),
+        await getAsync(),
         await getAsync(),
       ),
     );

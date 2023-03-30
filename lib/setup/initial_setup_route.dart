@@ -50,7 +50,6 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
         }
 
         final InitialSetupStore initialSetupStore = snapshot.data!;
-        initialSetupStore.loadData();
 
         _disposers.add(
           reaction(
@@ -79,16 +78,18 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
           ),
         );
 
+        initialSetupStore.initialize();
+
         return Form(
           key: _formKey,
           child: Scaffold(
-            body: initialSetupStore.showProgress && !widget.shouldPopOnFinish
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : SafeArea(
-                    child: Observer(
-                      builder: (_) => Column(
+            body: Observer(
+              builder: (_) => initialSetupStore.showProgress
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : SafeArea(
+                      child: Column(
                         children: [
                           TextFormField(
                             onChanged: (value) {
@@ -162,7 +163,7 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                         ],
                       ),
                     ),
-                  ),
+            ),
           ),
         );
       });
