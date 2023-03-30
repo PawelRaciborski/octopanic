@@ -7,9 +7,9 @@ import 'package:octopanic/main.dart';
 import 'initial_setup_store.dart';
 
 class InitialSetupRoute extends StatefulWidget {
-  final bool shouldPopOnFinish;
+  final bool isRunForInitialConfiguration;
 
-  const InitialSetupRoute({Key? key, required this.shouldPopOnFinish}) : super(key: key);
+  const InitialSetupRoute({Key? key, required this.isRunForInitialConfiguration}) : super(key: key);
 
   @override
   State<InitialSetupRoute> createState() => _InitialSetupRouteState();
@@ -68,7 +68,7 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                 );
                 return;
               }
-              if (widget.shouldPopOnFinish) {
+              if (widget.isRunForInitialConfiguration) {
                 Navigator.pop(context);
               } else {
                 Navigator.pushReplacement(
@@ -82,7 +82,7 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
           ),
         );
 
-        initialSetupStore.initialize();
+        initialSetupStore.initialize(!widget.isRunForInitialConfiguration);
 
         return Form(
           key: _formKey,

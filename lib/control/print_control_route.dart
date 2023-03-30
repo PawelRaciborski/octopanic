@@ -41,7 +41,7 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const InitialSetupRoute(
-                            shouldPopOnFinish: true,
+                            isRunForInitialConfiguration: true,
                           ),
                         ),
                       );

@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const InitialSetupRoute(
-        shouldPopOnFinish: false,
+        isRunForInitialConfiguration: false,
       ),
     );
   }

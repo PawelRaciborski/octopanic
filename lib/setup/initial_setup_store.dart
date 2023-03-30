@@ -71,8 +71,8 @@ abstract class _InitialSetupStore with Store {
   bool get isReadyForNavigation => _isReadyForNavigation;
 
   @action
-  Future initialize() async {
-    if (_configurationRepository.initialConfigurationSucceeded) {
+  Future initialize(bool navigateOnStartup) async {
+    if (_configurationRepository.initialConfigurationSucceeded && navigateOnStartup) {
       _isReadyForNavigation = true;
     } else {
       final url = await _configurationRepository.instanceUrl;
