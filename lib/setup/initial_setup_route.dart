@@ -15,12 +15,6 @@ class InitialSetupRoute extends StatefulWidget {
   State<InitialSetupRoute> createState() => _InitialSetupRouteState();
 }
 
-class InitialSetupRouteArguments {
-  final bool shouldPopOnFinish;
-
-  InitialSetupRouteArguments(this.shouldPopOnFinish);
-}
-
 class _InitialSetupRouteState extends State<InitialSetupRoute> {
   final _formKey = GlobalKey<FormState>();
 
@@ -69,20 +63,20 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
                 return;
               }
               if (widget.isRunForInitialConfiguration) {
-                Navigator.pop(context);
-              } else {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const PrintControlRoute(),
                   ),
                 );
+              } else {
+                Navigator.pop(context);
               }
             },
           ),
         );
 
-        initialSetupStore.initialize(!widget.isRunForInitialConfiguration);
+        initialSetupStore.initialize();
 
         return Form(
           key: _formKey,
