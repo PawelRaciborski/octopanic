@@ -9,6 +9,7 @@ import 'package:octopanic/control/send_command_usecase.dart';
 
 part 'print_control_store.g.dart';
 
+// ignore: library_private_types_in_public_api
 class PrintControlStore = _PrintControlStore with _$PrintControlStore;
 
 abstract class _PrintControlStore with Store {

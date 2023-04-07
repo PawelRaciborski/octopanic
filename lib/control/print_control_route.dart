@@ -31,8 +31,7 @@ class _PrintControlRoute extends State<PrintControlRoute> {
         final PrintControlStore printControlStore = snapshot.data!;
         printControlStore.loadData();
 
-        return Observer(builder: (context) {
-          return Scaffold(
+        return Observer(builder: (context) => Scaffold(
             appBar: AppBar(
               actions: [
                 IconButton(
@@ -41,7 +40,7 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const InitialSetupRoute(
-                            isRunForInitialConfiguration: true,
+                            isRunForInitialConfiguration: false,
                           ),
                         ),
                       );
@@ -77,8 +76,7 @@ class _PrintControlRoute extends State<PrintControlRoute> {
                       ],
                     ),
                   ),
-          );
-        });
+          ));
       });
 
   Widget _buildStatusDetails(

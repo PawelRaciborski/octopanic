@@ -1,9 +1,11 @@
 import 'package:mobx/mobx.dart';
 import 'package:octopanic/api/api.dart';
+import 'package:octopanic/api/api_config.dart';
 import 'package:octopanic/config/config_repo.dart';
 
 part 'initial_setup_store.g.dart';
 
+// ignore: library_private_types_in_public_api
 class InitialSetupStore = _InitialSetupStore with _$InitialSetupStore;
 
 abstract class _InitialSetupStore with Store {
@@ -71,20 +73,16 @@ abstract class _InitialSetupStore with Store {
   bool get isReadyForNavigation => _isReadyForNavigation;
 
   @action
-  Future initialize(bool navigateOnStartup) async {
-    if (_configurationRepository.initialConfigurationSucceeded && navigateOnStartup) {
-      _isReadyForNavigation = true;
-    } else {
-      final url = await _configurationRepository.instanceUrl;
-      _instanceUrl = url;
-      _initialInstanceUrl = url;
+  Future initialize() async {
+    final url = await _configurationRepository.instanceUrl; // ?? "http://${ApiConfig.baseUrl}/api/";
+    _instanceUrl = _initialInstanceUrl = url;
 
-      final apiKey = await _configurationRepository.apiKey;
-      _apiKey = _initialApiKey = apiKey;
+    final apiKey = await _configurationRepository.apiKey; // ?? ApiConfig.apiKey;
+    _apiKey = _initialApiKey = apiKey;
 
-      final streamUrl = await _configurationRepository.streamUrl;
-      _streamUrl = _initialStreamUrl = streamUrl;
-    }
+    final streamUrl = await _configurationRepository.streamUrl;
+    _streamUrl = _initialStreamUrl = streamUrl;
+
     _showProgress = false;
   }
 
