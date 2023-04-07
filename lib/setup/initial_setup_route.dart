@@ -25,6 +25,29 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
   @override
   void initState() {
     super.initState();
+    _initialSetupStoreFuture.then((store) {
+      _disposers.add(
+        reaction(
+          (_) => store.isReadyForNavigation,
+          (value) {
+            if (!(value == true)) {
+              return;
+            }
+            if (widget.isRunForInitialConfiguration) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PrintControlRoute(),
+                ),
+              );
+            } else {
+              Navigator.pop(context);
+            }
+          },
+        ),
+      );
+      store.initialize();
+    });
   }
 
   @override
@@ -48,35 +71,6 @@ class _InitialSetupRouteState extends State<InitialSetupRoute> {
         }
 
         final InitialSetupStore initialSetupStore = snapshot.data!;
-
-        _disposers.add(
-          reaction(
-            (_) => initialSetupStore.isReadyForNavigation,
-            (value) {
-              if (!(value == true)) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content:
-                        Text('Could not connect to the server at ${initialSetupStore.instanceUrl}'),
-                  ),
-                );
-                return;
-              }
-              if (widget.isRunForInitialConfiguration) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PrintControlRoute(),
-                  ),
-                );
-              } else {
-                Navigator.pop(context);
-              }
-            },
-          ),
-        );
-
-        initialSetupStore.initialize();
 
         return Form(
           key: _formKey,
